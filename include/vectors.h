@@ -10,8 +10,14 @@
 #include <stdarg.h>
 
 #define VECTOR_INIT(vec, capacity) vector vec; vector_init(&vec, capacity)
-#define VECTOR_ADD(vec, item) vector_push_back(&vec, (void *) item)
-#define VECTOR_SET(vec, id, item) vector_set(&vec, id, (void *) item)
+#define VECTOR_ADD(vec, type, item) {\
+    type _item = *item;\
+    vector_push_back(&vec, (void *) &_item);\
+    }
+#define VECTOR_SET(vec, type, id, item) {\
+    type _item = *item;\
+    vector_set(&vec, id, (void *) &_item);\
+    }
 #define VECTOR_GET(vec, type, id) *(type*) vector_get(&vec, id)
 #define VECTOR_DELETE(vec, id) vector_delete(&vec, id)
 #define VECTOR_TOTAL(vec) vector_total(&vec)

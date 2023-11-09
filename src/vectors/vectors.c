@@ -31,8 +31,10 @@ i32 vector_resize(vector *v, i32 capacity)
     }
     return status;
 }
+
 i32 vector_push_back(vector *v, void *item)
 {
+
     i32  status = UNDEFINED;
     if(v)
     {
@@ -60,7 +62,7 @@ i32 vector_set(vector *v, i32 index, void *item)
     i32 status = UNDEFINED;
     if(v)
     {
-        if ((index >= 0) && (index < VECTOR_TOTAL(*v)))
+        if ((index >= 0) && (index < v->vector_list.capacity))
         {
             v->vector_list.elements[index] = item;
             v->vector_list.total++;
@@ -79,7 +81,7 @@ void *vector_get(vector *v, i32 index)
     void *read_data = NULL;
     if(v)
     {
-        if ((index >= 0) && (index < VECTOR_TOTAL(*v)))
+        if ((index >= 0) && (index < v->vector_list.capacity))
         {
             read_data = v->vector_list.elements[index];
         }

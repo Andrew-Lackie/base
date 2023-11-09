@@ -1,6 +1,6 @@
-#include <logger.h>
-#include <defines.h>
-#include <asserts.h>
+#include "logger.h"
+#include "defines.h"
+#include "asserts.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -16,7 +16,7 @@ void log_output(log_level level, const char* message, ...) {
 	va_end(arg_ptr);
 
 	char out_message_2[32000];
-	sprintf(out_message_2, "%s%s\n", level_string[level], out_message_1);
+	sprintf(out_message_2, "\n%s%s\n", level_string[level], out_message_1);
 	printf("%s", out_message_2);
 }
 
