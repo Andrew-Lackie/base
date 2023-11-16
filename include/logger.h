@@ -2,7 +2,6 @@
 #define ASSERTIONS_H
 
 #include <stdbool.h>
-#include <stdlib.h>
 #include <stdarg.h>
 
 #define LOG_WARN_ENABLED 1

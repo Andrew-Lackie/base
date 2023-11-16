@@ -1,7 +1,6 @@
 #ifndef __CPU_H
 #define __CPU_H
 
-#include <stdlib.h>
 #include <stdio.h>
 
 typedef struct core_data {

@@ -1,7 +1,7 @@
 #include <threads.h>
 
-i32 thread_manager(void* obj, void* (*f)(void*), const pthread_attr_t* attr, size_t total_tasks, size_t total_threads) {
-
+i32 thread_manager(void* obj, void* (*f)(void*), const pthread_attr_t* attr, size_t total_tasks, size_t total_threads)
+{
     cpu_info cpu = core_count();
 
     total_threads = cpu.cores;

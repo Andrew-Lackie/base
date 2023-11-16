@@ -1,7 +1,8 @@
 #ifndef _MEMORY_H
 #define _MEMORY_H
 
-#include "defines.h"
+#include <defines.h>
+#include <stdio.h>
 
 /**
  * Tags to track memory allocation

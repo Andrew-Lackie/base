@@ -1,10 +1,9 @@
 #include <memory.h>
-#include <logger.h>
 #include <asserts.h>
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <signal.h>
 
 static const char* memory_tag_strings[MEMORY_TAG_MAX_TAGS] = {
     "UNKNOWN    ",
@@ -23,7 +22,8 @@ struct memory_stats {
 
 static struct memory_stats stats;
 
-void initialize_memory() {
+void initialize_memory()
+{
     memset(&stats, 0, sizeof(stats));
 }
 
@@ -34,7 +34,8 @@ static void memset_aligned(void *block, char byte, size_t n_bytes)
     memset(block, byte, n_bytes);
 }
 
-void* m_allocate(size_t size, memory_tag tag) {
+void* m_allocate(size_t size, memory_tag tag)
+{
     if (tag == MEMORY_TAG_UNKNOWN) {
         LOG_WARN("m_allocate called using MEMORY_TAG_UNKNOWN. Re-class this allocation");
     }
@@ -51,8 +52,8 @@ void* m_allocate(size_t size, memory_tag tag) {
     return block;
 }
 
-void* m_reallocate(void* block, size_t size, memory_tag tag) {
-
+void* m_reallocate(void* block, size_t size, memory_tag tag)
+{
     void* new_block;
 
     if (tag == MEMORY_TAG_UNKNOWN) {
@@ -79,7 +80,8 @@ void* m_reallocate(void* block, size_t size, memory_tag tag) {
     return new_block;
 }
 
-void* m_allocate_aligned(size_t size, memory_tag tag, size_t alignment) {
+void* m_allocate_aligned(size_t size, memory_tag tag, size_t alignment)
+{
     if (tag == MEMORY_TAG_UNKNOWN) {
         LOG_WARN("m_allocate_aligned called using MEMORY_TAG_UNKNOWN. Re-class this allocation");
     }
@@ -104,7 +106,8 @@ void* m_allocate_aligned(size_t size, memory_tag tag, size_t alignment) {
     return ptr;
 }
 
-void m_free(void* block, size_t size, memory_tag tag) {
+void m_free(void* block, size_t size, memory_tag tag)
+{
     if (tag == MEMORY_TAG_UNKNOWN) {
         LOG_WARN("m_free called using MEMORY_TAG_UNKNOWN. Re-class this allocation");
     }
@@ -115,15 +118,18 @@ void m_free(void* block, size_t size, memory_tag tag) {
     free(block);
 }
 
-void* m_copy_memory(void* dest, const void* source, size_t size) {
+void* m_copy_memory(void* dest, const void* source, size_t size)
+{
     return memcpy(dest, source, size);
 }
 
-void* m_set_memory(void* dest, i32 value, size_t size) {
+void* m_set_memory(void* dest, i32 value, size_t size)
+{
     return memset(dest, value, size);
 }
 
-char* get_memory_usage_str() {
+char* get_memory_usage_str()
+{
     char buffer[8000] = "System memory use (tagged):\n";
     u64 offset = strlen(buffer);
     for (u32 i = 0; i < MEMORY_TAG_MAX_TAGS; i++) {

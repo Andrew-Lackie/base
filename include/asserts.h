@@ -1,8 +1,7 @@
 #ifndef _ASSERTS_H
 #define _ASSERTS_H
 
-#include <signal.h>
-#include "defines.h"
+#include <defines.h>
 
 extern void report_assertion_failure(const char* expression, const char* message, const char* file, i32 line);
 

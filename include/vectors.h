@@ -1,15 +1,14 @@
 #ifndef _VECTORS_H
 #define _VECTORS_H
 
-#include "defines.h"
-#include "memory.h"
-#include "logger.h"
 #include <stdlib.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
+#include <memory.h>
 
 #define VECTOR_INIT(vec, capacity) vector vec; vector_init(&vec, capacity)
+#define VECTOR_GET(vec, type, id) *(type*) vector_get(&vec, id)
+#define VECTOR_DELETE(vec, id) vector_delete(&vec, id)
+#define VECTOR_TOTAL(vec) vector_total(&vec)
+#define VECTOR_FREE(vec) vector_free(&vec)
 #define VECTOR_ADD(vec, type, item) {\
     type _item = *item;\
     vector_push_back(&vec, (void *) &_item);\
@@ -18,10 +17,6 @@
     type _item = *item;\
     vector_set(&vec, id, (void *) &_item);\
     }
-#define VECTOR_GET(vec, type, id) *(type*) vector_get(&vec, id)
-#define VECTOR_DELETE(vec, id) vector_delete(&vec, id)
-#define VECTOR_TOTAL(vec) vector_total(&vec)
-#define VECTOR_FREE(vec) vector_free(&vec)
 
 #define VECTOR_INIT_CAPACITY 6
 #define UNDEFINED  -1
