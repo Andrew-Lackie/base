@@ -1,7 +1,7 @@
 #ifndef _MEMORY_H
 #define _MEMORY_H
 
-#include <defines.h>
+#include "defines.h"
 #include <stdio.h>
 
 /**
@@ -13,6 +13,11 @@ typedef enum memory_tag {
     MEMORY_TAG_ARRAY,
     MEMORY_TAG_VECTOR,
     MEMORY_TAG_MATRIX,
+    MEMORY_TAG_LINKED_LIST,
+    MEMORY_TAG_STACK,
+    MEMORY_TAG_GRAPH,
+    MEMORY_TAG_QUEUE,
+    MEMORY_TAG_NODE,
     MEMORY_TAG_STRING,
     MEMORY_TAG_LINEAR_ALLOCATOR,
     MEMORY_TAG_THREADS,

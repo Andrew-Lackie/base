@@ -1,8 +1,9 @@
 #ifndef _DEFINES_H
 #define _DEFINES_H
 
-#include <logger.h>
 #include <assert.h>
+#include <stdint.h>
+#include "logger.h"
 
 /* UNSIGNED INT TYPES. */
 

@@ -52,7 +52,7 @@ i32 vector_push_back(vector *v, void *item)
     }
     return status;
 }
-i32 vector_set(vector *v, i32 index, void *item)
+i32 vector_set(vector *v, i32 index, void* item)
 {
     i32 status = UNDEFINED;
     if(v) {

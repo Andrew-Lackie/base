@@ -2,21 +2,17 @@
 #define _VECTORS_H
 
 #include <stdlib.h>
-#include <memory.h>
+#include "memory.h"
+
+// ToDo: Add a macro to initialize nested vectors
 
 #define VECTOR_INIT(vec, capacity) vector vec; vector_init(&vec, capacity)
 #define VECTOR_GET(vec, type, id) *(type*) vector_get(&vec, id)
 #define VECTOR_DELETE(vec, id) vector_delete(&vec, id)
 #define VECTOR_TOTAL(vec) vector_total(&vec)
 #define VECTOR_FREE(vec) vector_free(&vec)
-#define VECTOR_ADD(vec, type, item) {\
-    type _item = *item;\
-    vector_push_back(&vec, (void *) &_item);\
-    }
-#define VECTOR_SET(vec, type, id, item) {\
-    type _item = *item;\
-    vector_set(&vec, id, (void *) &_item);\
-    }
+#define VECTOR_SET(vec, id, item) vector_set(&vec, id, item)
+#define VECTOR_ADD(vec, item) vector_push_back(&vec, item)
 
 #define VECTOR_INIT_CAPACITY 6
 #define UNDEFINED  -1
@@ -29,7 +25,7 @@ typedef struct vec_list
     i32 total;
 } vec_list;
 
-//structure contain the function poi32er
+//structure contains the function pointers
 typedef struct vec vector;
 
 struct vec
