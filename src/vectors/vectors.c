@@ -1,4 +1,6 @@
 #include <vectors.h>
+#include <logger.h>
+#include <memory.h>
 
 i32 vector_total(vector *v)
 {
@@ -56,9 +58,8 @@ i32 vector_set(vector *v, i32 index, void* item)
 {
     i32 status = UNDEFINED;
     if(v) {
-        if ((index >= 0) && (index < v->vector_list.capacity)) {
+        if ((index >= 0) && (index < v->vector_list.total)) {
             v->vector_list.elements[index] = item;
-            v->vector_list.total++;
             status = SUCCESS;
         }
     }
@@ -72,7 +73,7 @@ void *vector_get(vector *v, i32 index)
 {
     void *read_data = NULL;
     if(v) {
-        if ((index >= 0) && (index < v->vector_list.capacity)) {
+        if ((index >= 0) && (index < VECTOR_TOTAL(*v))) {
             read_data = v->vector_list.elements[index];
         }
         else {

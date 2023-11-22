@@ -1,10 +1,7 @@
 #ifndef _LL_QUEUE_H
 #define _LL_QUEUE_H
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <logger.h>
-#include <memory.h>
 
 #define Q_VOIDPTR(x) (void*)&x
 #define Q_CAST(q, type, position) *(type*)(q->position)->data

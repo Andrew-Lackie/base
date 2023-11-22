@@ -1,4 +1,6 @@
 #include <ll.h>
+#include <memory.h>
+#include <logger.h>
 
 List* ll_init() {
 	List* new_list = (List*)m_allocate(sizeof(List), MEMORY_TAG_LINKED_LIST);

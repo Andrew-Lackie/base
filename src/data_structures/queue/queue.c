@@ -1,4 +1,6 @@
 #include <queue.h>
+#include <memory.h>
+#include <logger.h>
 
 Queue* create_queue() {
     Queue* q = m_allocate(sizeof(struct Queue), MEMORY_TAG_QUEUE);

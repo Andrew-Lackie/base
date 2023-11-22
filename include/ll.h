@@ -1,9 +1,7 @@
 #ifndef _LL_H
 #define _LL_H
 
-#include <logger.h>
-#include <memory.h>
-#include <stdio.h>
+#include "defines.h"
 #include <stdlib.h>
 
 #define LL_VOIDPTR(x) (void*)&x

@@ -1,4 +1,7 @@
 #include <threads.h>
+#include <logger.h>
+#include <cpu.h>
+#include <math.h>
 
 i32 thread_manager(void* obj, void* (*f)(void*), const pthread_attr_t* attr, size_t total_tasks, size_t total_threads)
 {

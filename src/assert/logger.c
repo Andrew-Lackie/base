@@ -1,7 +1,8 @@
-#include <asserts.h>
+#include <defines.h>
 #include <stdio.h>
 #include <string.h>
 #include <logger.h>
+#include <stdarg.h>
 
 void log_output(log_level level, const char* message, ...)
 {

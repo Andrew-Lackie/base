@@ -2,8 +2,6 @@
 #define _DEFINES_H
 
 #include <assert.h>
-#include <stdint.h>
-#include "logger.h"
 
 /* UNSIGNED INT TYPES. */
 

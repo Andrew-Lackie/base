@@ -1,8 +1,8 @@
 #ifndef _VECTORS_H
 #define _VECTORS_H
 
+#include "defines.h"
 #include <stdlib.h>
-#include "memory.h"
 
 // ToDo: Add a macro to initialize nested vectors
 

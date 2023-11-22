@@ -1,8 +1,6 @@
 #ifndef _LL_STACK_H
 #define _LL_STACK_H
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "ll.h"
 
 extern struct Node *front;

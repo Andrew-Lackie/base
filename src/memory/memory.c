@@ -1,6 +1,9 @@
+#include <m_stdlib.h>
 #include <memory.h>
+#include <logger.h>
 #include <asserts.h>
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include <signal.h>
@@ -156,6 +159,6 @@ char* get_memory_usage_str()
         i32 length = snprintf(buffer + offset, 8000, " %s: %.2f%s\n", memory_tag_strings[i], amount, unit);
         offset += length;
     }
-    char* out_string = strdup(buffer);
+    char* out_string = m_strdup(buffer);
     return out_string;
 }

@@ -2,18 +2,31 @@
 NAME=base
 
 # Dirs
+#
 ROOT=./src
 LLIBDIR=./lib
+OBJ=./obj
+
+TEST=./tests
+
 GLIBDIR=/usr/local/lib
-SO=lib$(NAME).so
-A=lib$(NAME).a
+
 LIBA=$(LLIBDIR)/$(A)
 LIBSO=$(LLIBDIR)/$(SO)
 
-# Files
 CODEDIRS=$(shell find $(ROOT) -type d)
 INCDIRS=./include
+
+# Files
+
+SO=lib$(NAME).so
+A=lib$(NAME).a
+
 INCFILES=$(foreach D, $(INCDIRS),$(wildcard $(D)/*.h))
+CFILES=$(foreach D,$(CODEDIRS),$(wildcard $(D)/*.c))
+
+TESTS=$(wildcard $(TEST)/*.c)
+TESTBINS=$(patsubst $(TEST)/%.c, $(TEST)/bin/%, $(TESTS))
 
 # Compiler
 CC=gcc
@@ -25,33 +38,56 @@ WARNFLAGS=-Wall -Wextra
 ERRORFLAGS=-Werror
 DEBUGFLAGS=-g -v
 LIBFLAGS=-fPIC
-CFLAGS=$(foreach D,$(INCDIRS),-I$(D)) $(DEPFLAGS)
 LINKFLAGS= $(foreach D,$(INCDIRS),-L$(D)) $(DEPFLAGS)
 
-# for-style iteration (foreach) and regular expression completions (wildcard)
-CFILES=$(foreach D,$(CODEDIRS),$(wildcard $(D)/*.c))
+# Release flags
+LOCALFLAGS=$(WARNFLAGS)
+DEBUG=$(ERRORFLAGS) $(DEBUGFLAGS) $(WARNFLAGS)
+PRODUCTION=$(foreach D,$(INCDIRS),-I$(D)) $(DEPFLAGS)
+CFLAGS=$(foreach D,$(INCDIRS),-I$(D)) $(DEPFLAGS) $(LOCALFLAGS)
 
 # regular expression replacement
 OBJECTS=$(patsubst %.c,%.o,$(CFILES))
 DEPFILES=$(patsubst %.c,%.d,$(CFILES))
 
-install: $(LIBSO) $(LIBA)
+all: $(LIBA) $(LIBSO)
+
+production: CFLAGS=$(PRODUCTION)
+production: clean
+production: $(LIBA) $(LIBSO)
+
+debug: CFLAGS=$(DEBUG)
+debug: clean
+debug: $(LIBA) $(LIBSO)
+
 $(LIBSO): $(OBJECTS)
-	mkdir -p $(LLIBDIR)
-	$(CC) -shared -o $@ $^ $(LINKFLAGS)
+		$(CC) -shared -o $@ $^ $(LINKFLAGS)
+
+$(LIBA): $(OBJECTS)
+		ar -r $@ $^
+
+%.o: %.c $(LLIBDIR)
+	$(CC) $(LIBFLAGS) $(CFLAGS) -c -o $@ $<
+
+$(TEST)/bin/%: $(TEST)/%.c
+	$(CC) $(CFLAGS) $< $(OBJECTS) -o $@ -lcriterion
+
+$(LLIBDIR):
+	mkdir -p $@
+
+$(TEST)/bin:
+	mkdir -p $@
+
+test: $(LIBA) $(TEST)/bin $(TESTBINS)
+	for test in $(TESTBINS) ; do ./$$test ; done
+
+install: $(LIBSO) $(LIBA) $(OBJECTS)
 	$(foreach D,$(INCFILES),$(shell ln -sf $(shell pwd)/$(D) /usr/local/$(D)))
 	ln -sf $(shell pwd)/$(LIBSO) $(GLIBDIR)/$(SO)
 	touch /etc/ld.so.conf.d/local_dynamic_lib.conf /etc/ld.so.conf.d/local_dynamic_include.conf
 	echo "/usr/local/lib" > /etc/ld.so.conf.d/local_dynamic_lib.conf
 	echo "/usr/local/include" > /etc/ld.so.conf.d/local_dynamic_include.conf
 	ldconfig
-
-$(LIBA): $(OBJECTS)
-	ar -r $@ $^
-
-# only want the .c file dependency here, thus $< instead of $^.
-%.o:%.c
-	$(CC) $(LIBFLAGS) $(CFLAGS) -c -o $@ $<
 
 uninstall:
 	$(foreach D,$(INCFILES),$(shell rm /usr/local/$(D)))

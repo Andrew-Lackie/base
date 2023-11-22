@@ -1,12 +1,9 @@
 #ifndef _DG_H
 #define _DG_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <defines.h>
+#include <stdbool.h>
 #include <memory.h>
 #include <vectors.h>
-#include <ll.h>
 
 typedef struct Vertex Vertex;
 typedef struct Edge Edge;

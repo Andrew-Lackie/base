@@ -1,9 +1,7 @@
 #ifndef _THREADS_H
 #define _THREADS_H
 
-#include <defines.h>
-#include <cpu.h>
-#include <math.h>
+#include "defines.h"
 #include <pthread.h>
 
 typedef struct thread_data {
