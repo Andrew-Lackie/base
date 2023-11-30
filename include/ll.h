@@ -10,7 +10,7 @@
 typedef struct Node Node;
 
 struct Node {
-	void *data;
+	void* data;
 	Node* next;
 };
 
@@ -35,7 +35,17 @@ Node* ll_insert_begin(List* list, void *data);
 
 Node* ll_insert_end(List* list, void *data);
 
-Node* ll_insert_index(List* list, void *data, int index);
+Node* ll_insert_index(List* list, void *data, size_t index);
+
+/*
+ * Get Nodes
+ */
+
+Node* ll_get_begin(List* list);
+
+Node* ll_get_end(List* list);
+
+Node* ll_get_index(List* list, size_t index);
 
 /*
  * Remove nodes
@@ -45,12 +55,12 @@ i32 ll_remove_begin(List* list);
 
 i32 ll_remove_end(List* list);
 
-i32 ll_remove_index(List* list, int index);
+i32 ll_remove_index(List* list, size_t index);
 
 /*
  * Print nodes
  */
 
-void ll_print(List* list, void *data, int index);
+void ll_print(List* list, void *data, size_t index);
 
 #endif

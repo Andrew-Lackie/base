@@ -1,61 +1,124 @@
 #include <graph.h>
+#include <stdint.h>
 #include <logger.h>
 #include <ll.h>
 
-static Vertex* create_vertex(void *data, size_t weight, size_t dest)
-{
-    Vertex *vertex = m_allocate(sizeof(Vertex), MEMORY_TAG_GRAPH);
+/*
+ * Create graph
+ */
 
-    vertex->dest = dest;
-    vertex->weight = weight;
-    vertex->data = data;
-
-    return vertex;
-}
-
-static vector create_adj_list(size_t n_vertices)
-{
-    VECTOR_INIT(adj_list, n_vertices);
-
-    for (size_t i = 0; i < n_vertices; i++) {
-        VECTOR_ADD(adj_list, ll_init());
-    }
-
-    return adj_list;
-}
-
-Graph* create_graph(size_t n)
+Graph* create_graph(size_t n_vertices, bool is_dir)
 {
     Graph* graph = m_allocate(sizeof(Graph), MEMORY_TAG_GRAPH);
 
-    graph->adj_list = create_adj_list(n);
+    VECTOR_INIT(adj_list, n_vertices);
+
+    graph->adj_list = adj_list;
+    graph->is_dir = is_dir;
 
     return graph;
 }
 
-void add_edge_undir(Graph *graph, void *data_src, void *data_dest, size_t weight_src, size_t weight_dest, size_t src, size_t dest)
-{
-    Vertex* vertex = create_vertex(data_dest, weight_dest, dest);
-    ll_insert_end(VECTOR_GET(graph->adj_list, List*, src), vertex);
+/*
+ * Insert vertices
+ */
 
-    if (!(graph->is_dir)) {
-        Vertex* vertex = create_vertex(data_src, weight_src, src);
-        ll_insert_end(VECTOR_GET(graph->adj_list, List*, dest), vertex);
+Vertex* insert_graph_vertex(Graph *graph, void* data)
+{
+    size_t v_total = vector_total(&graph->adj_list);
+    size_t v_capacity = vector_capacity(&graph->adj_list);
+
+    Vertex* vertex = m_allocate(sizeof(Vertex), MEMORY_TAG_GRAPH);
+
+    vertex->data = data;
+
+    List* list = ll_init();
+
+    if (v_total < v_capacity) {
+        ll_insert_begin(list, (void*) vertex);
+        vector_set(&graph->adj_list, v_total, (void*) list);
+        vertex->index = v_total;
     }
     else {
-        LOG_WARN("Adding a directed edge to an undirected graph. Please use the function add_edge_undir or change the graph's state.");
+        ll_insert_begin(list, (void*) vertex);
+        vector_push_back(&graph->adj_list, (void*) list);
+        vertex->index = v_total;
     }
 
+    return vertex;
 }
 
-void add_edge_dir(Graph *graph, void *data_dest, size_t weight_dest, size_t src, size_t dest)
+/*
+ * Insert edge
+ */
+
+void insert_graph_edge(Graph* graph, Vertex* v1, Vertex* v2)
 {
-    vector adj_list = graph->adj_list;
+    size_t v1_index = v1->index;
+    size_t v2_index = v2->index;
 
-    Vertex* vertex = create_vertex(data_dest, weight_dest, dest);
-    ll_insert_end(VECTOR_GET(adj_list, List*, src), vertex);
+    List* list_1 = (List*) vector_get(&graph->adj_list, v1_index);
+    List* list_2 = (List*) vector_get(&graph->adj_list, v2_index);
 
-    if (!(graph->is_dir)) {
-        LOG_WARN("Adding an undirected edge to a directed graph. Please use the function add_edge_dir or change the graph's state.");
+    if (list_1 != NULL)
+        ll_insert_end(list_1, v2);
+
+    if (!graph->is_dir) {
+        if (list_2 != NULL)
+            ll_insert_end(list_2, v1);
     }
+}
+
+/*
+ * Remove vertex
+ */
+
+i32 remove_graph_vertex(Graph *graph, size_t index)
+{
+    Vertex* vertex = (Vertex*) vector_get(&graph->adj_list, index);
+    m_free(vertex, sizeof(vertex), MEMORY_TAG_GRAPH);
+
+    return 0;
+}
+
+/*
+ * Remove edge
+ */
+
+i32 remove_graph_edge(Graph *graph, size_t v_index, size_t ll_index)
+{
+    if (graph != NULL) {
+        List* list = (List*) vector_get(&graph->adj_list, v_index);
+        ll_remove_index(list, ll_index);
+        return 0;
+    }
+    else {
+        return -1;
+    }
+}
+
+/*
+ * Remove adjacency list
+ */
+
+i32 remove_graph_adj_list(Graph *graph)
+{
+    return vector_free(&graph->adj_list);
+}
+
+/*
+ * Remove graph
+ */
+
+i32 remove_graph(Graph *graph)
+{
+    i32 status = 0;
+
+    if (graph == NULL) {
+        status = -1;
+    }
+    else {
+        m_free(graph, sizeof(graph), MEMORY_TAG_GRAPH);
+    }
+    return status;
 }

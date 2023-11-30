@@ -60,29 +60,8 @@ debug: CFLAGS=$(DEBUG)
 debug: clean
 debug: $(LIBA) $(LIBSO)
 
-$(LIBSO): $(OBJECTS)
-		$(CC) -shared -o $@ $^ $(LINKFLAGS)
-
-$(LIBA): $(OBJECTS)
-		ar -r $@ $^
-
-%.o: %.c $(LLIBDIR)
-	$(CC) $(LIBFLAGS) $(CFLAGS) -c -o $@ $<
-
-$(TEST)/bin/%: $(TEST)/%.c
-	$(CC) $(CFLAGS) $< $(OBJECTS) -o $@ -lcriterion
-
-$(LLIBDIR):
-	mkdir -p $@
-
-$(TEST)/bin:
-	mkdir -p $@
-
-test: $(LIBA) $(TEST)/bin $(TESTBINS)
-	for test in $(TESTBINS) ; do ./$$test ; done
-
-install: $(LIBSO) $(LIBA) $(OBJECTS)
-	$(foreach D,$(INCFILES),$(shell ln -sf $(shell pwd)/$(D) /usr/local/$(D)))
+install: $(LIBSO) $(LIBA) $(INCFILES)
+	cp $(INCFILES) /usr/local/include/
 	ln -sf $(shell pwd)/$(LIBSO) $(GLIBDIR)/$(SO)
 	touch /etc/ld.so.conf.d/local_dynamic_lib.conf /etc/ld.so.conf.d/local_dynamic_include.conf
 	echo "/usr/local/lib" > /etc/ld.so.conf.d/local_dynamic_lib.conf
@@ -93,6 +72,27 @@ uninstall:
 	$(foreach D,$(INCFILES),$(shell rm /usr/local/$(D)))
 	rm $(GLIBDIR)/$(SO)
 	rm -rf $(BINARY) $(OBJECTS) $(DEPFILES) $(LIBA) $(LIBSO) $(DYNAMICLIB)
+
+$(LIBSO): $(OBJECTS)
+		$(CC) -shared -o $@ $^ $(LINKFLAGS)
+
+$(LIBA): $(OBJECTS)
+		ar -r $@ $^
+
+%.o: %.c
+	$(CC) $(LIBFLAGS) $(CFLAGS) -c -o $@ $<
+
+$(TEST)/bin/%: $(TEST)/%.c $(LLIBDIR)
+	$(CC) $(CFLAGS) $< $(OBJECTS) -o $@ -lcriterion
+
+$(LLIBDIR):
+	mkdir -p $@
+
+$(TEST)/bin:
+	mkdir -p $@
+
+test: $(LIBA) $(TEST)/bin $(TESTBINS)
+	for test in $(TESTBINS) ; do ./$$test ; done
 
 clean:
 	rm -rf $(BINARY) $(OBJECTS) $(DEPFILES) $(LIBA) $(LIBSO) $(DYNAMICLIB)

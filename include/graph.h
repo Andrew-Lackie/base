@@ -4,35 +4,71 @@
 #include <stdbool.h>
 #include <memory.h>
 #include <vectors.h>
+#include <ll.h>
 
 typedef struct Vertex Vertex;
 typedef struct Edge Edge;
+typedef struct Adj_List Adj_List;
 typedef struct Graph Graph;
 
-// Data structure to store vertex information
-
 struct Vertex {
-    size_t dest;
-    size_t weight;
     void* data;
+    size_t index;
 };
 
-// Data structure to store a graph
 struct Graph {
     vector adj_list;
+    size_t edges;
+    size_t vertices;
     bool is_dir;
 };
 
-// Function to create a graph
+/*
+ * Create graph
+ */
 
-Graph* create_graph(size_t n);
+Graph* create_graph(size_t n_vertices, bool is_dir);
 
-void add_edge_undir(Graph* graph, void *data_src, void *data_dest, size_t weight_src, size_t weight_dest, size_t src, size_t dest);
+/*
+ * Create vertex
+ */
 
-void add_edge_dir(Graph* graph, void *data_dest, size_t weight_dest, size_t src, size_t dest);
+Vertex* insert_graph_vertex(Graph *graph, void* data);
 
-// Functions to traverse a graph
+/*
+ * Insert edges
+ */
 
+void insert_graph_edge(Graph *graph, Vertex* v1, Vertex* v2);
 
+/*
+ * Remove vertex
+ */
+
+i32 remove_graph_vertex(Graph *graph, size_t index);
+
+/*
+ * Remove edge
+ */
+
+i32 remove_graph_edge(Graph *graph, size_t src, size_t dest);
+
+/*
+ * Remove node
+ */
+
+i32 remove_graph_node(Graph *graph, size_t index);
+
+/*
+ * Remove adjacency list
+ */
+
+i32 remove_graph_adj_list(Graph *graph);
+
+/*
+ * Remove graph
+ */
+
+i32 remove_graph(Graph *graph);
 
 #endif
