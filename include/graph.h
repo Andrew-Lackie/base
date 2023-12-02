@@ -54,18 +54,6 @@ i32 remove_graph_vertex(Graph *graph, size_t index);
 i32 remove_graph_edge(Graph *graph, size_t src, size_t dest);
 
 /*
- * Remove node
- */
-
-i32 remove_graph_node(Graph *graph, size_t index);
-
-/*
- * Remove adjacency list
- */
-
-i32 remove_graph_adj_list(Graph *graph);
-
-/*
  * Remove graph
  */
 

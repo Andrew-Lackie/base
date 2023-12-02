@@ -75,10 +75,22 @@ void insert_graph_edge(Graph* graph, Vertex* v1, Vertex* v2)
 
 i32 remove_graph_vertex(Graph *graph, size_t index)
 {
-    Vertex* vertex = (Vertex*) vector_get(&graph->adj_list, index);
-    m_free(vertex, sizeof(vertex), MEMORY_TAG_GRAPH);
+    i32 status;
 
-    return 0;
+    if (graph == NULL) {
+        LOG_WARN("Attempting to remove vertex at position %lu in NULL graph", index);
+        status = -1;
+    }
+    else {
+        List* list = (List*) vector_get(&graph->adj_list, index);
+        status = ll_remove_list(list);
+
+        if (status != -1) {
+            status = vector_set(&graph->adj_list, index, NULL);
+        }
+    }
+
+    return status;
 }
 
 /*
@@ -87,23 +99,17 @@ i32 remove_graph_vertex(Graph *graph, size_t index)
 
 i32 remove_graph_edge(Graph *graph, size_t v_index, size_t ll_index)
 {
-    if (graph != NULL) {
-        List* list = (List*) vector_get(&graph->adj_list, v_index);
-        ll_remove_index(list, ll_index);
-        return 0;
+    i32 status;
+    if (graph == NULL) {
+        LOG_WARN("Attempting to remove edge at position %lu,%lu in NULL graph.", v_index, ll_index);
+        status = -1;
     }
     else {
-        return -1;
+        List* list = (List*) vector_get(&graph->adj_list, v_index);
+        ll_remove_index(list, ll_index);
+        status = 0;
     }
-}
-
-/*
- * Remove adjacency list
- */
-
-i32 remove_graph_adj_list(Graph *graph)
-{
-    return vector_free(&graph->adj_list);
+    return status;
 }
 
 /*
@@ -112,13 +118,15 @@ i32 remove_graph_adj_list(Graph *graph)
 
 i32 remove_graph(Graph *graph)
 {
-    i32 status = 0;
+    i32 status;
 
     if (graph == NULL) {
+        LOG_WARN("Attempting to remove NULL graph.");
         status = -1;
     }
     else {
         m_free(graph, sizeof(graph), MEMORY_TAG_GRAPH);
+        status = vector_free(&graph->adj_list);
     }
     return status;
 }

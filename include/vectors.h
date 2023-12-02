@@ -3,6 +3,7 @@
 
 #include "defines.h"
 #include <stdlib.h>
+#include <stdbool.h>
 
 // ToDo: Add a macro to initialize nested vectors
 
@@ -18,8 +19,12 @@
 #define UNDEFINED  -1
 #define SUCCESS 0
 
-typedef struct vec_list
-{
+typedef struct element {
+    void* data;
+    bool is_set;
+} v_element;
+
+typedef struct vec_list {
     void **elements;
     size_t capacity;
     size_t total;
@@ -28,8 +33,7 @@ typedef struct vec_list
 //structure contains the function pointers
 typedef struct vec vector;
 
-struct vec
-{
+struct vec {
     vec_list vector_list;
     //function pointers
     size_t (*pf_vector_total)(vector *);
@@ -45,6 +49,8 @@ struct vec
 size_t vector_total(vector *v);
 
 size_t vector_capacity(vector *v);
+
+bool vector_is_set(vector *v, size_t index);
 
 i32 vector_resize(vector *v, size_t capacity);
 

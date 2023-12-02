@@ -58,6 +58,12 @@ i32 ll_remove_end(List* list);
 i32 ll_remove_index(List* list, size_t index);
 
 /*
+ * Remove list
+ */
+
+i32 ll_remove_list(List* list);
+
+/*
  * Print nodes
  */
 

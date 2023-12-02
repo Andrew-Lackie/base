@@ -68,12 +68,12 @@ Test(vector_tests, types) {
 	vector_push_back(&v, (void*) &test);
 	vector_push_back(&v, (void*) list);
 
-	cr_assert(eq(i32, (i32)(uintptr_t) v.vector_list.elements[0], 10));
-	cr_assert(eq(i64, (i64)(uintptr_t) v.vector_list.elements[1], 10));
-	cr_assert(eq(flt, *(f32*)v.vector_list.elements[2], 10.0f));
-	cr_assert(eq(dbl, *(f64*)v.vector_list.elements[3], 10.0f));
-	cr_assert(eq(i32, *(bool*)v.vector_list.elements[4], true));
-	cr_assert(eq(i32, (*(List*)v.vector_list.elements[5]).size, 0));
+	cr_assert(eq(i32, (i32)(uintptr_t) vector_get(&v, 0), 10));
+	cr_assert(eq(i64, (i64)(uintptr_t) vector_get(&v, 1), 10));
+	cr_assert(eq(flt, *(f32*) vector_get(&v, 2), 10.0f));
+	cr_assert(eq(dbl, *(f64*) vector_get(&v, 3), 10.0f));
+	cr_assert(eq(i32, *(bool*) vector_get(&v, 4), true));
+	cr_assert(eq(i32, (*(List*) vector_get(&v, 5)).size, 0));
 }
 
 Test(vector_tests, set) {
@@ -91,11 +91,32 @@ Test(vector_tests, set) {
 	vector_set(&v, 4, (void*)(bool*) &b);
 	vector_set(&v, 5, (void*)(struct test*) &test);
 
-	cr_assert(eq(i32, (i32)(uintptr_t) v.vector_list.elements[0], 10));
-	cr_assert(eq(i64, (i64)(uintptr_t) v.vector_list.elements[1], 10));
-	cr_assert(eq(flt, *(f32*)v.vector_list.elements[2], 10.0f));
-	cr_assert(eq(dbl, *(f64*)v.vector_list.elements[3], 10.0f));
-	cr_assert(eq(i32, *(bool*)v.vector_list.elements[4], true));
+	cr_assert(eq(i32, (i32)(uintptr_t) vector_get(&v, 0), 10));
+	cr_assert(eq(i64, (i64)(uintptr_t) vector_get(&v, 1), 10));
+	cr_assert(eq(flt, *(f32*) vector_get(&v, 2), 10.0f));
+	cr_assert(eq(dbl, *(f64*) vector_get(&v, 3), 10.0f));
+	cr_assert(eq(i32, *(bool*) vector_get(&v, 4), true));
+	cr_assert(eq(i32, (*(List*) vector_get(&v, 5)).size, 0));
+
+}
+
+Test(vector_tests, is_set) {
+	vector v;
+	vector_init(&v, vector_size);
+
+	vector_set(&v, 0, (void*)(uintptr_t) i);
+	vector_set(&v, 1, (void*)(uintptr_t) ii);
+	vector_set(&v, 2, (void*)(f32*) &f);
+	vector_set(&v, 3, (void*)(f64*) &ff);
+	vector_set(&v, 4, (void*)(bool*) &b);
+	vector_set(&v, 5, (void*)(struct test*) &test);
+
+	cr_assert(eq(i32, vector_is_set(&v, 0), true));
+	cr_assert(eq(i32, vector_is_set(&v, 1), true));
+	cr_assert(eq(i32, vector_is_set(&v, 2), true));
+	cr_assert(eq(i32, vector_is_set(&v, 3), true));
+	cr_assert(eq(i32, vector_is_set(&v, 4), true));
+	cr_assert(eq(i32, vector_is_set(&v, 5), true));
 }
 
 Test(vector_tests, get) {
@@ -111,9 +132,9 @@ Test(vector_tests, get) {
 
 	cr_assert(eq(i32, (i32)(uintptr_t) vector_get(&v, 0), 10));
 	cr_assert(eq(i64, (i64)(uintptr_t) vector_get(&v, 1), 10));
-	cr_assert(eq(flt, *(f32*)vector_get(&v, 2), 10.0f));
-	cr_assert(eq(dbl, *(f64*)vector_get(&v, 3), 10.0f));
-	cr_assert(eq(i32, *(bool*)vector_get(&v, 4), true));
+	cr_assert(eq(flt, *(f32*) vector_get(&v, 2), 10.0f));
+	cr_assert(eq(dbl, *(f64*) vector_get(&v, 3), 10.0f));
+	cr_assert(eq(i32, *(bool*) vector_get(&v, 4), true));
 }
 
 Test(vector_tests, resize) {
@@ -232,5 +253,4 @@ Test(vector_tests, zero_init) {
 
 	vector_push_back(&v, (void*)(struct test*) &test);
 	cr_assert(eq(i32, vector_total(&v), 6));
-
 }

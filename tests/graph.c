@@ -85,3 +85,19 @@ Test(graph_tests, insert_edges) {
 	cr_assert(eq(i32, node_4->index, 3));
 	cr_assert(eq(i32, node_5->index, 4));
 }
+
+Test(graph_tests, remove_vertex) {
+	Graph* graph = create_graph(5, true);
+
+	Vertex* node_1 = insert_graph_vertex(graph, (void*)(uintptr_t) i);
+	Vertex* node_2 = insert_graph_vertex(graph, (void*)(uintptr_t) ii);
+	Vertex* node_3 = insert_graph_vertex(graph, (void*)(f32*) &f);
+	Vertex* node_4 = insert_graph_vertex(graph, (void*)(f64*) &ff);
+	Vertex* node_5 = insert_graph_vertex(graph, (void*)(bool*) &b);
+
+	/*remove_graph_vertex(Graph *graph, size_t index);*/
+
+}
+
+/*i32 remove_graph_edge(Graph *graph, size_t src, size_t dest);*/
+/*i32 remove_graph(Graph *graph);*/
