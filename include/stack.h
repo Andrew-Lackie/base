@@ -1,13 +1,38 @@
 #ifndef _LL_STACK_H
 #define _LL_STACK_H
 
-#include "ll.h"
+#include <ll.h>
+#include <vectors.h>
+#include <stdbool.h>
+#include <stdarg.h>
 
-extern struct Node *front;
-extern struct Node *rear;
+typedef enum IMPL_TYPE {
+	LL,
+	VECTOR
+} IMPL_TYPE;
 
-Node* enqueue(Node** node, void* value);
+typedef struct  Stack {
+	IMPL_TYPE impl_type;
+	union {
+		List* ll;
+		vector vec;
+	};
+} Stack;
 
-void dequeue(Node** node);
+/*
+ * Stack
+ */
+
+Stack* stack_init(IMPL_TYPE type, size_t capacity);
+
+i32 stack_push(Stack* stack, void* data);
+
+i32 stack_pop(Stack* stack);
+
+void* stack_show(Stack* stack);
+
+bool stack_is_empty(Stack* stack);
+
+i32 stack_remove(Stack* stack);
 
 #endif

@@ -105,18 +105,16 @@ Test(vector_tests, is_set) {
 	vector_init(&v, vector_size);
 
 	vector_set(&v, 0, (void*)(uintptr_t) i);
-	vector_set(&v, 1, (void*)(uintptr_t) ii);
-	vector_set(&v, 2, (void*)(f32*) &f);
-	vector_set(&v, 3, (void*)(f64*) &ff);
-	vector_set(&v, 4, (void*)(bool*) &b);
-	vector_set(&v, 5, (void*)(struct test*) &test);
-
 	cr_assert(eq(i32, vector_is_set(&v, 0), true));
-	cr_assert(eq(i32, vector_is_set(&v, 1), true));
-	cr_assert(eq(i32, vector_is_set(&v, 2), true));
-	cr_assert(eq(i32, vector_is_set(&v, 3), true));
-	cr_assert(eq(i32, vector_is_set(&v, 4), true));
-	cr_assert(eq(i32, vector_is_set(&v, 5), true));
+	cr_assert(eq(i32, vector_total(&v), 1));
+	vector_set(&v, 0, (void*)(uintptr_t) ii);
+	cr_assert(eq(i32, vector_total(&v), 1));
+
+	vector_set(&v, 1, (void*)(uintptr_t) ii);
+	cr_assert(eq(i32, vector_is_set(&v, 0), true));
+	cr_assert(eq(i32, vector_total(&v), 2));
+	vector_set(&v, 1, (void*)(uintptr_t) i);
+	cr_assert(eq(i32, vector_total(&v), 2));
 }
 
 Test(vector_tests, get) {

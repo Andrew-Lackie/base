@@ -19,7 +19,7 @@
 #define UNDEFINED  -1
 #define SUCCESS 0
 
-typedef struct element {
+typedef struct v_element {
     void* data;
     bool is_set;
 } v_element;

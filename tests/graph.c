@@ -89,15 +89,63 @@ Test(graph_tests, insert_edges) {
 Test(graph_tests, remove_vertex) {
 	Graph* graph = create_graph(5, true);
 
-	Vertex* node_1 = insert_graph_vertex(graph, (void*)(uintptr_t) i);
-	Vertex* node_2 = insert_graph_vertex(graph, (void*)(uintptr_t) ii);
+	insert_graph_vertex(graph, (void*)(uintptr_t) i);
+	insert_graph_vertex(graph, (void*)(uintptr_t) ii);
 	Vertex* node_3 = insert_graph_vertex(graph, (void*)(f32*) &f);
 	Vertex* node_4 = insert_graph_vertex(graph, (void*)(f64*) &ff);
 	Vertex* node_5 = insert_graph_vertex(graph, (void*)(bool*) &b);
 
-	/*remove_graph_vertex(Graph *graph, size_t index);*/
+	remove_graph_vertex(graph, 0);
+	remove_graph_vertex(graph, 1);
 
+	cr_assert(vector_get(&graph->adj_list, 0) == NULL);
+	cr_assert(vector_get(&graph->adj_list, 1) == NULL);
+	cr_assert(eq(i32, node_3->index, 2));
+	cr_assert(eq(i32, node_4->index, 3));
+	cr_assert(eq(i32, node_5->index, 4));
+
+	remove_graph_vertex(graph, 2);
+	remove_graph_vertex(graph, 3);
+
+	cr_assert(vector_get(&graph->adj_list, 2) == NULL);
+	cr_assert(vector_get(&graph->adj_list, 3) == NULL);
+	cr_assert(eq(i32, node_5->index, 4));
+
+	remove_graph_vertex(graph, 4);
+
+	cr_assert(vector_get(&graph->adj_list, 4) == NULL);
 }
 
-/*i32 remove_graph_edge(Graph *graph, size_t src, size_t dest);*/
-/*i32 remove_graph(Graph *graph);*/
+Test(graph_tests, remove_edge) {
+	Graph* graph = create_graph(5, true);
+
+	Vertex* node_1 = insert_graph_vertex(graph, (void*)(uintptr_t) i);
+	Vertex* node_2 = insert_graph_vertex(graph, (void*)(uintptr_t) ii);
+	Vertex* node_3 = insert_graph_vertex(graph, (void*)(f32*) &f);
+	Vertex* node_5 = insert_graph_vertex(graph, (void*)(bool*) &b);
+
+	insert_graph_edge(graph, node_1, node_2);
+	insert_graph_edge(graph, node_2, node_3);
+	insert_graph_edge(graph, node_2, node_5);
+
+	List* l_node_1 = (List*) vector_get(&graph->adj_list, 0);
+	cr_assert(eq(i32, l_node_1->size, 2));
+	remove_graph_edge(graph, 0, 1);
+	cr_assert(eq(i32, l_node_1->size, 1));
+
+	List* l_node_2 = (List*) vector_get(&graph->adj_list, 1);
+	cr_assert(eq(i32, l_node_2->size, 3));
+	remove_graph_edge(graph, 1, 2);
+	cr_assert(eq(i32, l_node_2->size, 2));
+}
+
+/*Test(graph_tests, remove_graph) {*/
+	/*Graph* graph = create_graph(5, true);*/
+
+	/*Vertex* node_1 = insert_graph_vertex(graph, (void*)(uintptr_t) i);*/
+	/*Vertex* node_2 = insert_graph_vertex(graph, (void*)(uintptr_t) ii);*/
+	/*Vertex* node_3 = insert_graph_vertex(graph, (void*)(f32*) &f);*/
+	/*Vertex* node_5 = insert_graph_vertex(graph, (void*)(bool*) &b);*/
+
+	/*cr_assert(eq(i32, remove_graph(graph), 0));*/
+/*}*/

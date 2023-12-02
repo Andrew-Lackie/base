@@ -28,6 +28,12 @@ struct List {
 List* ll_init();
 
 /*
+ * list total
+ */
+
+size_t ll_total(List* list);
+
+/*
  * Insert nodes
  */
 

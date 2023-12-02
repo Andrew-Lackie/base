@@ -14,6 +14,19 @@ List* ll_init() {
 }
 
 /*
+ * Get size
+ */
+
+size_t ll_total(List* list)
+{
+	if (list == NULL) {
+		LOG_ERROR("ll_total: list is NULL");
+		return -1;
+	}
+	return list->size;
+}
+
+/*
  * Insert Nodes
  */
 
@@ -175,6 +188,7 @@ i32 ll_remove_begin(List* list) {
 		curr = list->head;
 		list->head = curr->next;
 		free(curr);
+		list->size--;
 		status = 0;
 	}
 	return status;
@@ -195,6 +209,7 @@ i32 ll_remove_end(List* list) {
 		list->head = NULL;
 		LOG_INFO("List is empty");
 		free(temp);
+		list->size--;
 		status = -1;
 	}
 	else {
@@ -206,6 +221,7 @@ i32 ll_remove_end(List* list) {
 
 		curr->next = NULL;
 		free(temp);
+		list->size--;
 		status = 0;
 	}
 	return status;
@@ -234,6 +250,7 @@ i32 ll_remove_index(List* list, size_t index) {
 			temp = curr;
 			curr = curr->next;
 			free(temp);
+			list->size--;
 			status = 0;
 		}
 		else if (index > list->size - 1) {
@@ -247,6 +264,7 @@ i32 ll_remove_index(List* list, size_t index) {
 			}
 			temp->next = curr->next;
 			free(curr);
+			list->size--;
 			status = 0;
 		}
 	}

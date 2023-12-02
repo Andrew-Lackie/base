@@ -1,6 +1,7 @@
 #include <vectors.h>
 #include <logger.h>
 #include <memory.h>
+#include <string.h>
 
 static void *vector_create_element(void* data)
 {
@@ -19,7 +20,13 @@ size_t vector_total(vector *v)
 
 size_t vector_capacity(vector *v)
 {
-    return v->vector_list.capacity;;
+    if (v == NULL) {
+        return 0;
+    }
+    if (v->vector_list.elements == NULL) {
+        return 0;
+    }
+    return v->vector_list.capacity;
 }
 
 bool vector_is_set(vector *v, size_t index)
@@ -45,12 +52,28 @@ bool vector_is_set(vector *v, size_t index)
 i32 vector_resize(vector *v, size_t capacity)
 {
     i32 status = UNDEFINED;
+    void **elements;
+
     if (v) {
         capacity = capacity == 0 ? 1 : capacity;
-        void **elements = m_reallocate(v->vector_list.elements, sizeof(void *) * capacity, MEMORY_TAG_VECTOR);
-        v->vector_list.elements = elements;
-        v->vector_list.capacity = capacity;
-        status = SUCCESS;
+        if (capacity > vector_capacity(v)) {
+            if (v->vector_list.elements == NULL) {
+                v->vector_list.elements = m_allocate(sizeof(void *) * capacity, MEMORY_TAG_VECTOR);
+            }
+            else {
+                elements = m_reallocate(v->vector_list.elements, sizeof(void *) * capacity, MEMORY_TAG_VECTOR);
+                v->vector_list.elements = elements;
+            }
+            v->vector_list.capacity = capacity;
+            status = SUCCESS;
+        }
+        else if (capacity < vector_capacity(v)) {
+            elements = m_allocate(sizeof(void *) * capacity, MEMORY_TAG_VECTOR);
+            memcpy(elements, v->vector_list.elements, sizeof(void*) * vector_total(v));
+            v->vector_list.elements = elements;
+            v->vector_list.capacity = capacity;
+            status = SUCCESS;
+        }
     }
     else
     {
@@ -117,6 +140,10 @@ void *vector_get(vector *v, size_t index)
     if (v) {
         if (index < vector_total(v)) {
             item = (v_element*) v->vector_list.elements[index];
+            if (item == NULL) {
+                LOG_WARN("vector_get: the element at index %d is NULL.", index);
+                return NULL;
+            }
             data = item->data;
         }
         else {
