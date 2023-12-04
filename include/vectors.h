@@ -5,17 +5,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-// ToDo: Add a macro to initialize nested vectors
-
-#define VECTOR_INIT(vec, capacity) vector vec; vector_init(&vec, capacity)
-#define VECTOR_GET(vec, type, id) *(type*) vector_get(&vec, id)
-#define VECTOR_DELETE(vec, id) vector_delete(&vec, id)
-#define VECTOR_TOTAL(vec) vector_total(&vec)
-#define VECTOR_CAPACITY(vec) vector_capacity(&vec)
-#define VECTOR_FREE(vec) vector_free(&vec)
-#define VECTOR_SET(vec, id, item) vector_set(&vec, id, item)
-#define VECTOR_ADD(vec, item) vector_push_back(&vec, item)
-
 #define UNDEFINED  -1
 #define SUCCESS 0
 
@@ -31,39 +20,43 @@ typedef struct vec_list {
 } vec_list;
 
 //structure contains the function pointers
-typedef struct vec vector;
+typedef struct vec Vector;
 
 struct vec {
     vec_list vector_list;
     //function pointers
-    size_t (*pf_vector_total)(vector *);
-    size_t (*pf_vector_capacity)(vector *);
-    i32 (*pf_vector_resize)(vector *, size_t);
-    i32 (*pf_vector_add)(vector *, void *);
-    i32 (*pf_vector_set)(vector *, size_t, void *);
-    void *(*pf_vector_get)(vector *, size_t);
-    i32 (*pf_vector_delete)(vector *, size_t);
-    i32 (*pf_vector_free)(vector *);
+    size_t (*pf_vector_total)(Vector *);
+    size_t (*pf_vector_capacity)(Vector *);
+    bool (*pf_vector_is_set)(Vector *v, size_t index);
+    i32 (*pf_vector_resize)(Vector *, size_t);
+    i32 (*pf_vector_add)(Vector *, void *);
+    i32 (*pf_vector_set)(Vector *, size_t, void *);
+    i32 (*pf_vector_add_next)(Vector *v, void *item);
+    void *(*pf_vector_get)(Vector *, size_t);
+    i32 (*pf_vector_delete)(Vector *, size_t);
+    i32 (*pf_vector_free)(Vector *);
 };
 
-size_t vector_total(vector *v);
+size_t vector_total(Vector *v);
 
-size_t vector_capacity(vector *v);
+size_t vector_capacity(Vector *v);
 
-bool vector_is_set(vector *v, size_t index);
+bool vector_is_set(Vector *v, size_t index);
 
-i32 vector_resize(vector *v, size_t capacity);
+i32 vector_resize(Vector *v, size_t capacity);
 
-i32 vector_push_back(vector *v, void *item);
+i32 vector_push_back(Vector *v, void *item);
 
-i32 vector_set(vector *v, size_t index, void *item);
+i32 vector_set(Vector *v, size_t index, void *item);
 
-void *vector_get(vector *v, size_t index);
+i32 vector_add_next(Vector *v, void *item);
 
-i32 vector_delete(vector *v, size_t index);
+void *vector_get(Vector *v, size_t index);
 
-i32 vector_free(vector *v);
+i32 vector_delete(Vector *v, size_t index);
 
-void vector_init(vector *v, size_t capacity);
+i32 vector_free(Vector *v);
+
+Vector *vector_init(size_t capacity);
 
 #endif

@@ -34,9 +34,10 @@ Node* ll_insert_begin(List* list, void* value) {
 
 	Node* new_node = m_allocate(sizeof(Node), MEMORY_TAG_NODE);
 	new_node->data = value;
+	new_node->prev = NULL;
 
 	if (new_node == NULL) {
-		LOG_ERROR("Linked list node could not be properly allocated in ll_insert_begin");
+		LOG_ERROR("ll_insert_begin: linked list node could not be properly allocated in ll_insert_begin");
 		exit(1);
 	}
 	else if (list == NULL) {
@@ -54,13 +55,15 @@ Node* ll_insert_begin(List* list, void* value) {
 
 Node* ll_insert_end(List* list, void* value) {
 	Node* new_node = m_allocate(sizeof(Node), MEMORY_TAG_NODE);
-	Node* curr = list->head;
-	new_node->data = value;
 
 	if (new_node == NULL) {
-		LOG_ERROR("Linked list node could not be properly allocated in ll_insert_end");
-		exit(1);
+		LOG_ERROR("ll_insert_end: linked list node could not be properly allocated in ll_insert_end");
+		return NULL;
 	}
+
+	Node* curr = list->head;
+	new_node->data = value;
+	new_node->prev = NULL;
 
 	if (list->head == NULL) {
 		list->head = new_node;
@@ -72,6 +75,7 @@ Node* ll_insert_end(List* list, void* value) {
 			curr = curr->next;
 		}
 
+		new_node->prev = curr;
 		curr->next = new_node;
 		list->size += 1;
 
@@ -80,16 +84,6 @@ Node* ll_insert_end(List* list, void* value) {
 }
 
 Node* ll_insert_index(List* list, void* value, size_t index) {
-	Node* new_node = m_allocate(sizeof(Node), MEMORY_TAG_NODE);
-	Node* curr = list->head;
-	new_node->data = value;
-
-	if (new_node == NULL) {
-		LOG_ERROR("Linked list node could not be properly allocated in ll_insert_index");
-		exit(1);
-	}
-
-	new_node->next = NULL;
 
 	if (index == 0) {
 		return ll_insert_begin(list, value);
@@ -98,17 +92,33 @@ Node* ll_insert_index(List* list, void* value, size_t index) {
 		return ll_insert_end(list, value);
 	}
 	else if (index > list->size) {
-		LOG_FATAL("index %d not found", index);
-		free(new_node);
+		LOG_FATAL("ll_insert_index: index %d not found", index);
 		return NULL;
 	}
 	else {
+		Node* new_node = m_allocate(sizeof(Node), MEMORY_TAG_NODE);
+
+		if (new_node == NULL) {
+			LOG_ERROR("ll_insert_index: linked list node could not be properly allocated in ll_insert_index");
+			return NULL;
+		}
+
+		Node* curr = list->head;
+		new_node->data = value;
+
+		new_node->next = NULL;
+		new_node->prev = NULL;
+
+
 		for (size_t i = 0; i < index; i++) {
 			curr = curr->next;
 		}
 
 		new_node->next = curr->next;
+		new_node->prev = curr;
+		new_node->next->prev = new_node;
 		curr->next = new_node;
+
 		list->size += 1;
 		return curr->next;
 	}
@@ -121,17 +131,37 @@ Node* ll_insert_index(List* list, void* value, size_t index) {
 Node* ll_get_begin(List* list) {
 
 	if (list == NULL) {
-		LOG_WARN("List is null; returning null");
+		LOG_WARN("ll_get_begin: list is null; returning null");
 		return NULL;
 	}
 
 	return list->head;
 }
 
+Node* ll_get_next(Node* node) {
+
+	if (node == NULL) {
+		return NULL;
+	}
+	else {
+		return node->next;
+	}
+}
+
+Node* ll_get_prev(Node* node) {
+
+	if (node == NULL) {
+		return NULL;
+	}
+	else {
+		return node->prev;
+	}
+}
+
 Node* ll_get_end(List* list) {
 
 	if (list == NULL) {
-		LOG_WARN("List is null; returning null");
+		LOG_WARN("ll_get_next: list is null; returning null");
 		return NULL;
 	}
 	else {
@@ -149,11 +179,11 @@ Node* ll_get_index(List* list, size_t index) {
 	Node* curr = ll_get_begin(list);
 
 	if (list == NULL) {
-		LOG_WARN("List is null; returning null");
+		LOG_WARN("ll_get_index: list is null; returning null");
 		curr = NULL;
 	}
 	else if (index > list->size - 1) {
-		LOG_FATAL("index %d not found", index);
+		LOG_ERROR("ll_get_index: index %d not found", index);
 		curr = NULL;
 	}
 	else if (index == 0) {

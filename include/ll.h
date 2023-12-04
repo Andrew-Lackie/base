@@ -12,6 +12,7 @@ typedef struct Node Node;
 struct Node {
 	void* data;
 	Node* next;
+	Node* prev;
 };
 
 typedef struct List List;
@@ -50,6 +51,10 @@ Node* ll_insert_index(List* list, void *data, size_t index);
 Node* ll_get_begin(List* list);
 
 Node* ll_get_end(List* list);
+
+Node* ll_get_next(Node* node);
+
+Node* ll_get_prev(Node* node);
 
 Node* ll_get_index(List* list, size_t index);
 

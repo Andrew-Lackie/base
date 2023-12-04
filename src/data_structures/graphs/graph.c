@@ -11,20 +11,29 @@ Graph* create_graph(size_t n_vertices, bool is_dir)
 {
     Graph* graph = m_allocate(sizeof(Graph), MEMORY_TAG_GRAPH);
 
-    VECTOR_INIT(adj_list, n_vertices);
+    Vector* adj_list = vector_init(n_vertices);
 
-    graph->adj_list = adj_list;
+    if (graph == NULL) {
+        LOG_WARN("create_graph: graph could not be allocated");
+        return NULL;
+    }
+
+    graph->adj_list = *adj_list;
     graph->is_dir = is_dir;
 
     return graph;
 }
 
 /*
- * Insert vertices
+ * Insert/get vertices
  */
 
 Vertex* insert_graph_vertex(Graph *graph, void* data)
 {
+    if (graph == NULL) {
+        LOG_WARN("get_graph_vertex: graph is NULL");
+        return NULL;
+    }
     size_t v_total = vector_total(&graph->adj_list);
     size_t v_capacity = vector_capacity(&graph->adj_list);
 
@@ -48,24 +57,45 @@ Vertex* insert_graph_vertex(Graph *graph, void* data)
     return vertex;
 }
 
+Vertex* get_graph_vertex(Graph *graph, size_t index)
+{
+    if (graph == NULL) {
+        LOG_WARN("get_graph_vertex: graph is NULL");
+        return NULL;
+    }
+
+    return vector_get(&graph->adj_list, index);
+}
+
 /*
- * Insert edge
+ * Insert/get edge
  */
 
-void insert_graph_edge(Graph* graph, Vertex* v1, Vertex* v2)
+i32 insert_graph_edge(Graph* graph, Vertex* v1, Vertex* v2)
 {
-    size_t v1_index = v1->index;
-    size_t v2_index = v2->index;
+    if (graph == NULL) {
+        LOG_WARN("get_graph_vertex: graph is NULL");
+        return -1;
+    }
+    else if (v1 == NULL || v2 == NULL) {
+        LOG_WARN("insert_graph_edge: vertex is NULL");
+        return -1;
+    }
+    else {
+        size_t v1_index = v1->index;
+        size_t v2_index = v2->index;
 
-    List* list_1 = (List*) vector_get(&graph->adj_list, v1_index);
-    List* list_2 = (List*) vector_get(&graph->adj_list, v2_index);
+        List* list_1 = (List*) vector_get(&graph->adj_list, v1_index);
+        List* list_2 = (List*) vector_get(&graph->adj_list, v2_index);
 
-    if (list_1 != NULL)
-        ll_insert_end(list_1, v2);
+        if (list_1 != NULL)
+            ll_insert_end(list_1, v2);
 
-    if (!graph->is_dir) {
-        if (list_2 != NULL)
-            ll_insert_end(list_2, v1);
+        if (!graph->is_dir) {
+            if (list_2 != NULL)
+                ll_insert_end(list_2, v1);
+        }
+        return 0;
     }
 }
 

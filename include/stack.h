@@ -15,7 +15,7 @@ typedef struct  Stack {
 	IMPL_TYPE impl_type;
 	union {
 		List* ll;
-		vector vec;
+		Vector vec;
 	};
 } Stack;
 
@@ -32,6 +32,8 @@ i32 stack_pop(Stack* stack);
 void* stack_show(Stack* stack);
 
 bool stack_is_empty(Stack* stack);
+
+size_t stack_total(Stack* stack);
 
 i32 stack_remove(Stack* stack);
 

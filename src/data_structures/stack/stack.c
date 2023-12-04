@@ -19,8 +19,8 @@ Stack* stack_init(IMPL_TYPE type, size_t capacity)
 		stack->impl_type = LL;
 	}
 	else if (type == VECTOR) {
-		VECTOR_INIT(vec, capacity);
-		stack->vec = vec;
+		Vector* vec = vector_init(capacity);
+		stack->vec = *vec;
 		stack->impl_type = VECTOR;
 	}
 	else {
@@ -42,15 +42,7 @@ i32 stack_push(Stack* stack, void* data)
 		return ll_insert_begin(stack->ll, data) == NULL ? -1 : 0;
 	}
 	else if (stack->impl_type == VECTOR) {
-    size_t v_total = vector_total(&stack->vec);
-    size_t v_capacity = vector_capacity(&stack->vec);
-
-    if (v_total < v_capacity) {
-        return vector_set(&stack->vec, v_total, data);
-    }
-    else {
-        return vector_push_back(&stack->vec, data);
-    }
+		return vector_add_next(&stack->vec, data);
 	}
 	else {
 		LOG_ERROR("stack_push: invalid IMPL_TYPE flag");
@@ -105,6 +97,24 @@ bool stack_is_empty(Stack* stack)
 	else {
 		LOG_ERROR("stack_is_empty: invalid IMPL_TYPE flag");
 		return NULL;
+	}
+}
+
+size_t stack_total(Stack* stack)
+{
+	if (stack == NULL) {
+		LOG_ERROR("stack_remove: stack is NULL");
+		return -1;
+	}
+	if (stack->impl_type == LL) {
+		return ll_total(stack->ll);
+	}
+	else if (stack->impl_type == VECTOR) {
+		return vector_total(&stack->vec);
+	}
+	else {
+		LOG_ERROR("stack_total: invalid IMPL_TYPE flag");
+		return -1;
 	}
 }
 

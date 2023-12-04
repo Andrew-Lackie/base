@@ -13,12 +13,12 @@ static void *vector_create_element(void* data)
     return item;
 }
 
-size_t vector_total(vector *v)
+size_t vector_total(Vector *v)
 {
     return v->vector_list.total;
 }
 
-size_t vector_capacity(vector *v)
+size_t vector_capacity(Vector *v)
 {
     if (v == NULL) {
         return 0;
@@ -29,7 +29,7 @@ size_t vector_capacity(vector *v)
     return v->vector_list.capacity;
 }
 
-bool vector_is_set(vector *v, size_t index)
+bool vector_is_set(Vector *v, size_t index)
 {
     bool is_set;
 
@@ -49,7 +49,7 @@ bool vector_is_set(vector *v, size_t index)
     return is_set;
 }
 
-i32 vector_resize(vector *v, size_t capacity)
+i32 vector_resize(Vector *v, size_t capacity)
 {
     i32 status = UNDEFINED;
     void **elements;
@@ -82,7 +82,7 @@ i32 vector_resize(vector *v, size_t capacity)
     return status;
 }
 
-i32 vector_push_back(vector *v, void *data)
+i32 vector_push_back(Vector *v, void *data)
 {
     v_element *item = vector_create_element(data);
     item->is_set = true;
@@ -106,7 +106,7 @@ i32 vector_push_back(vector *v, void *data)
     return status;
 }
 
-i32 vector_set(vector *v, size_t index, void* data)
+i32 vector_set(Vector *v, size_t index, void* data)
 {
     v_element *item;
 
@@ -132,7 +132,29 @@ i32 vector_set(vector *v, size_t index, void* data)
     return status;
 }
 
-void *vector_get(vector *v, size_t index)
+i32 vector_add_next(Vector *v, void* data)
+{
+    i32 status = UNDEFINED;
+
+    if (v) {
+        size_t v_total = vector_total(v);
+        size_t v_capacity = vector_capacity(v);
+
+        if (v_total < v_capacity) {
+            return vector_set(v, v_total, data);
+        }
+        else {
+            return vector_push_back(v, data);
+        }
+    }
+    else {
+        LOG_ERROR("vector_set: vector undefined at index %lu.");
+    }
+
+    return status;
+}
+
+void *vector_get(Vector *v, size_t index)
 {
     v_element* item;
     void* data = NULL;
@@ -156,7 +178,7 @@ void *vector_get(vector *v, size_t index)
     return data;
 }
 
-i32 vector_delete(vector *v, size_t index)
+i32 vector_delete(Vector *v, size_t index)
 {
     i32 status = UNDEFINED;
     size_t i = 0;
@@ -181,12 +203,12 @@ i32 vector_delete(vector *v, size_t index)
     return status;
 }
 
-i32 vector_free(vector *v)
+i32 vector_free(Vector *v)
 {
     i32  status = UNDEFINED;
     if (v) {
         m_free(v->vector_list.elements, v->vector_list.capacity, MEMORY_TAG_VECTOR);
-        v->vector_list.elements = NULL;
+        m_free(v, sizeof(Vector), MEMORY_TAG_VECTOR);
         status = SUCCESS;
     }
     else {
@@ -195,13 +217,18 @@ i32 vector_free(vector *v)
     return status;
 }
 
-void vector_init(vector *v, size_t capacity)
+Vector *vector_init(size_t capacity)
 {
+    Vector *v = m_allocate(sizeof(Vector), MEMORY_TAG_VECTOR);
+
     // init function pointers
     v->pf_vector_total = vector_total;
+    v->pf_vector_capacity = vector_capacity;
+    v->pf_vector_is_set = vector_is_set;
     v->pf_vector_resize = vector_resize;
     v->pf_vector_add = vector_push_back;
     v->pf_vector_set = vector_set;
+    v->pf_vector_add_next = vector_add_next;
     v->pf_vector_get = vector_get;
     v->pf_vector_free = vector_free;
     v->pf_vector_delete = vector_delete;
@@ -210,4 +237,6 @@ void vector_init(vector *v, size_t capacity)
     v->vector_list.capacity = capacity;
     v->vector_list.total = 0;
     v->vector_list.elements = capacity == 0 ? NULL : m_allocate(sizeof(void *) * v->vector_list.capacity, MEMORY_TAG_VECTOR);
+
+    return v;
 }

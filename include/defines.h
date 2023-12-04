@@ -2,6 +2,7 @@
 #define _DEFINES_H
 
 #include <assert.h>
+#include <stdint.h>
 
 /* UNSIGNED INT TYPES. */
 
@@ -69,6 +70,12 @@ static_assert(sizeof(f32) == 4, "Expected f32 to be 4 bytes.");
 // Assert f64 to be 8 bytes.
 static_assert(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
 
+// Convert type pointer to void pointer
+#define VOIDPTR(item) (void*) &item
+
+// Convert void pointer to item pointer then dereference
+#define CAST(type, item) (*(type*) item)
+
 /**
  * Gets number of arguments when using the __VA_ARGS__ macro
  **/
@@ -110,5 +117,26 @@ static_assert(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
  **/
 
 #define KILOBYTES(amount) ((u64)(amount) * 1000ULL)
+
+#define printf_format(x) _Generic((x), \
+    char: "%c", \
+    signed char: "%hhd", \
+    unsigned char: "%hhu", \
+    signed short: "%hd", \
+    unsigned short: "%hu", \
+    signed int: "%d", \
+    unsigned int: "%u", \
+    long int: "%ld", \
+    unsigned long int: "%lu", \
+    long long int: "%lld", \
+    unsigned long long int: "%llu", \
+    float: "%f", \
+    double: "%f", \
+    long double: "%Lf", \
+    char *: "%s", \
+    void *: "%p")
+
+#define print(x) printf(printf_format(x), x)
+#define printnl(x) printf(printf_format(x), x), printf("\n");
 
 #endif

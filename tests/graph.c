@@ -1,6 +1,7 @@
 #include <criterion/criterion.h>
 #include <criterion/new/assert.h>
 #include <graph.h>
+#include <stack.h>
 
 struct test {
 	i32 i;
@@ -63,7 +64,6 @@ Test(graph_tests, push_back_vertices) {
 	cr_assert(eq(i32, node_5->index, 4));
 }
 
-
 Test(graph_tests, insert_edges) {
 	Graph* graph = create_graph(5, true);
 
@@ -84,6 +84,31 @@ Test(graph_tests, insert_edges) {
 	cr_assert(eq(i32, node_3->index, 2));
 	cr_assert(eq(i32, node_4->index, 3));
 	cr_assert(eq(i32, node_5->index, 4));
+}
+
+Test(graph_tests, depth_first_search) {
+	Graph* graph = create_graph(5, true);
+
+	Vertex* node_1 = insert_graph_vertex(graph, (void*)(uintptr_t) i);
+	Vertex* node_2 = insert_graph_vertex(graph, (void*)(uintptr_t) ii);
+	Vertex* node_3 = insert_graph_vertex(graph, (void*)(f32*) &f);
+	Vertex* node_4 = insert_graph_vertex(graph, (void*)(f64*) &ff);
+	Vertex* node_5 = insert_graph_vertex(graph, (void*)(bool*) &b);
+
+	insert_graph_edge(graph, node_3, node_1);
+	insert_graph_edge(graph, node_1, node_4);
+	insert_graph_edge(graph, node_4, node_3);
+	insert_graph_edge(graph, node_3, node_5);
+	insert_graph_edge(graph, node_5, node_1);
+
+	cr_assert(eq(i32, node_1->index, 0));
+	cr_assert(eq(i32, node_2->index, 1));
+	cr_assert(eq(i32, node_3->index, 2));
+	cr_assert(eq(i32, node_4->index, 3));
+	cr_assert(eq(i32, node_5->index, 4));
+
+	Stack* vertices = dfs_graph(graph, 1, vector_total(&graph->adj_list), LL);
+	size_t total = stack_total(vertices);
 }
 
 Test(graph_tests, remove_vertex) {

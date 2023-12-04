@@ -40,6 +40,8 @@ Test(ll_tests, insert_get_begin) {
 
 	ll_insert_begin(list, (void*) &test);
 	cr_assert(eq(i32, (*(struct test*) ll_get_begin(list)->data).i, 14));
+
+	cr_assert(eq(i32, ll_total(list), 6));
 }
 
 Test(ll_tests, insert_get_end) {
@@ -84,4 +86,54 @@ Test(ll_tests, insert_get_index) {
 
 	ll_insert_index(list, (void*) &test, 5);
 	cr_assert(eq(i32, (*(struct test*) ll_get_index(list, 5)->data).i, 14));
+}
+
+Test(ll_tests, insert_get_next) {
+	List* list = ll_init();
+
+	ll_insert_end(list, (void*)(uintptr_t) i);
+	ll_insert_end(list, (void*)(uintptr_t) ii);
+	ll_insert_end(list, VOIDPTR(f));
+	ll_insert_end(list, VOIDPTR(ff));
+	ll_insert_end(list, VOIDPTR(b));
+	ll_insert_end(list, VOIDPTR(test));
+
+	Node* head = ll_get_begin(list);
+	Node* node2 = ll_get_next(head);
+	Node* node3 = ll_get_next(node2);
+	Node* node4 = ll_get_next(node3);
+	Node* node5 = ll_get_next(node4);
+	Node* node6 = ll_get_next(node5);
+
+	cr_assert(eq(i32, (i32)(uintptr_t) ll_get_begin(list)->data, 10)); // ERROR
+	cr_assert(eq(i64, (i64)(uintptr_t) node2->data, 11));
+	cr_assert(eq(flt, *(f32*) node3->data, 12.0f));
+	cr_assert(eq(i64, *(f64*) node4->data, 13.0f));
+	cr_assert(eq(i32, *(bool*) node5->data, true));
+	cr_assert(eq(i32, (*(struct test*) node6->data).i, 14));
+}
+
+Test(ll_tests, insert_get_prev) {
+	List* list = ll_init();
+
+	ll_insert_end(list, (void*)(uintptr_t) i);
+	ll_insert_end(list, (void*)(uintptr_t) ii);
+	ll_insert_end(list, VOIDPTR(f));
+	ll_insert_end(list, VOIDPTR(ff));
+	ll_insert_end(list, VOIDPTR(b));
+	ll_insert_end(list, VOIDPTR(test));
+
+	Node* node6 = ll_get_end(list);
+	Node* node5 = ll_get_prev(node6);
+	Node* node4 = ll_get_prev(node5);
+	Node* node3 = ll_get_prev(node4);
+	Node* node2 = ll_get_prev(node3);
+	Node* head = ll_get_prev(node2);
+
+	cr_assert(eq(i32, (*(struct test*) node6->data).i, 14));
+	cr_assert(eq(i32, *(bool*) node5->data, true));
+	cr_assert(eq(i64, *(f64*) node4->data, 13.0f));
+	cr_assert(eq(flt, *(f32*) node3->data, 12.0f));
+	cr_assert(eq(i64, (i64)(uintptr_t) node2->data, 11));
+	cr_assert(eq(i32, (i32)(uintptr_t) head->data, 10)); // ERROR
 }
