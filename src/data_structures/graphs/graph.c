@@ -35,7 +35,6 @@ Vertex* insert_graph_vertex(Graph *graph, void* data)
         return NULL;
     }
     size_t v_total = vector_total(&graph->adj_list);
-    size_t v_capacity = vector_capacity(&graph->adj_list);
 
     Vertex* vertex = m_allocate(sizeof(Vertex), MEMORY_TAG_GRAPH);
 
@@ -43,16 +42,10 @@ Vertex* insert_graph_vertex(Graph *graph, void* data)
 
     List* list = ll_init();
 
-    if (v_total < v_capacity) {
-        ll_insert_begin(list, (void*) vertex);
-        vector_set(&graph->adj_list, v_total, (void*) list);
-        vertex->index = v_total;
-    }
-    else {
-        ll_insert_begin(list, (void*) vertex);
-        vector_push_back(&graph->adj_list, (void*) list);
-        vertex->index = v_total;
-    }
+    ll_insert_begin(list, (void*) vertex);
+    vertex->index = v_total;
+
+    vector_add_next(&graph->adj_list, VOIDPTR(*list));
 
     return vertex;
 }
